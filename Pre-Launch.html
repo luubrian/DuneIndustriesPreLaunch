@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dune Industries | Pre-Launch</title>
+  <link rel="icon" type="image/png" href="logo-letters/crest.png" />
+
+  <!-- Tailwind via Play CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- React 18 + ReactDOM 18 (UMD) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel Standalone — transpiles TSX inline at runtime -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- General Sans -->
+  <link
+    rel="stylesheet"
+    href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap"
+  />
+
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body { font-family: 'General Sans', system-ui, sans-serif; background: #C9A97A; }
+  </style>
+
+  <!-- ── Back-navigation safety net ─────────────────────────────
+       When the user clicks the browser back button on the careers
+       page to return here, modern browsers may restore this page
+       from the back-forward cache (bfcache).  That means React
+       state, RAFs in flight, the load-in animation progress, and
+       the click-transition flag could be stale — which can leave
+       the page mid-animation, scrolled to a weird position, or
+       trying to re-navigate forward.  Detect bfcache restoration
+       via the persisted flag on `pageshow` and force a clean
+       reload from the top so the animation starts fresh. -->
+  <script>
+    window.addEventListener("pageshow", function (e) {
+      if (e.persisted) {
+        // Reset scroll BEFORE reload so the fresh load starts at 0.
+        window.scrollTo(0, 0);
+        window.location.reload();
+      }
+    });
+    // Belt-and-suspenders: also force scroll to top on initial load
+    // (some browsers restore the previous scroll position even on
+    // a fresh reload, which would skip past phase 0).
+    if ("scrollRestoration" in history) {
+      history.scrollRestoration = "manual";
+    }
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script id="app-source" type="text/plain">
+    const { useEffect, useState, useRef, useMemo } = React;
+
+    function ScrollAnimation() {
+      const [scrollY, setScrollY] = useState(0)
+      const [maxScroll, setMaxScroll] = useState(1)
+      const [particles, setParticles] = useState([])
+      const containerRef = useRef(null)
+      const lastScrollY = useRef(0)
+      const particleIdRef = useRef(0)
+      const [easterEggStep, setEasterEggStep] = useState(0)
+      const [easterEggUnlocked, setEasterEggUnlocked] = useState(false)
+      const easterEggStepRef = useRef(0)
+      easterEggStepRef.current = easterEggStep
+      const prevScrollProgressRef = useRef(0)
+      const passedDarkRef = useRef(false)
+      const [transitionProgress, setTransitionProgress] = useState(0)
+      const [isTransitioning, setIsTransitioning] = useState(false)
+      const [loadProgress, setLoadProgress] = useState(0)
+
+      useEffect(() => {
+        const SMOOTHING = 0.028
+        let raf = null
+        let displayed = window.scrollY
+        let target = window.scrollY
+        const tick = () => {
+          const diff = target - displayed
+          if (Math.abs(diff) < 0.5) {
+            displayed = target
+            setScrollY(target)
+            raf = null
+            return
+          }
+          displayed += diff * SMOOTHING
+          setScrollY(displayed)
+          raf = requestAnimationFrame(tick)
+        }
+        const updateMaxScroll = () => {
+          const m = document.documentElement.scrollHeight - window.innerHeight
+          if (m > 0) setMaxScroll(m)
+        }
+        const handleScroll = () => {
+          target = window.scrollY
+          updateMaxScroll()
+          if (raf === null) raf = requestAnimationFrame(tick)
+        }
+        // ResizeObserver catches the moment Tailwind's h-[600vh] CSS lands
+        // and the document grows, so maxScroll updates without the user
+        // needing to scroll first.
+        let ro = null
+        if (typeof ResizeObserver !== "undefined") {
+          ro = new ResizeObserver(updateMaxScroll)
+          ro.observe(document.documentElement)
+        }
+        setScrollY(window.scrollY)
+        window.addEventListener("scroll", handleScroll, { passive: true })
+        window.addEventListener("resize", updateMaxScroll)
+        updateMaxScroll()
+        // Poll for the first 4 s as a belt-and-suspenders fallback.
+        const pollId = setInterval(updateMaxScroll, 100)
+        const stopPoll = setTimeout(() => clearInterval(pollId), 4000)
+        return () => {
+          window.removeEventListener("scroll", handleScroll)
+          window.removeEventListener("resize", updateMaxScroll)
+          if (raf !== null) cancelAnimationFrame(raf)
+          if (ro) ro.disconnect()
+          clearInterval(pollId)
+          clearTimeout(stopPoll)
+        }
+      }, [])
+
+      const scrollProgress = maxScroll > 0 ? Math.min(scrollY / maxScroll, 1) : 0
+
+      const phase0End = 0.03
+      const phase1End = 0.17
+      const phase2End = 0.40
+      const phase3End = 0.50
+      const phase4End = 0.505
+      const phase5End = 0.833
+
+      const introProgress = Math.min(scrollProgress / phase0End, 1)
+      const logoWidthVw = 92 - 62 * introProgress
+      const introTopOffsetVh = -10 * (1 - introProgress)
+
+      const pivotProgress =
+        scrollProgress > phase0End
+          ? Math.min((scrollProgress - phase0End) / (phase1End - phase0End), 1)
+          : 0
+      const pivotProgressRef = useRef(0)
+      pivotProgressRef.current = pivotProgress
+
+      useEffect(() => {
+        const prev = prevScrollProgressRef.current
+        prevScrollProgressRef.current = scrollProgress
+        if (scrollProgress >= phase3End) passedDarkRef.current = true
+        if (passedDarkRef.current && scrollProgress < phase3End && prev >= phase3End) {
+          setEasterEggUnlocked(false)
+          setEasterEggStep(0)
+          passedDarkRef.current = false
+        }
+      }, [scrollProgress, phase3End])
+
+      const easterEggSequence = [
+        ["E", "enter"], ["E", "leave"],
+        ["N", "enter"], ["N", "leave"],
+        ["N", "enter"], ["N", "leave"],
+        ["N", "enter"], ["N", "leave"],
+        ["N", "enter"], ["N", "leave"],
+        ["crest", "enter"],
+      ]
+      const handleLetterHover = (letter, event) => {
+        if (easterEggUnlocked) return
+        if (pivotProgressRef.current < 0.99) return
+        const step = easterEggStepRef.current
+        const expected = easterEggSequence[step]
+        if (!expected) return
+        if (expected[0] === letter && expected[1] === event) {
+          if (step === easterEggSequence.length - 1) {
+            setEasterEggUnlocked(true)
+            setEasterEggStep(0)
+          } else {
+            setEasterEggStep(step + 1)
+          }
+        } else {
+          setEasterEggStep(0)
+        }
+      }
+
+      const phase2Progress =
+        scrollProgress > phase1End
+          ? Math.min((scrollProgress - phase1End) / (phase2End - phase1End), 1)
+          : 0
+      const easedPhase2Progress = 1 - Math.pow(1 - phase2Progress, 0.35)
+      const isDrilling = phase2Progress > 0.4 && scrollProgress < phase2End
+
+      const phase3Progress =
+        scrollProgress > phase2End
+          ? Math.min((scrollProgress - phase2End) / (phase3End - phase2End), 1)
+          : 0
+
+      const logoTranslateY =
+        scrollProgress <= phase2End
+          ? easedPhase2Progress * 40
+          : scrollProgress <= phase3End
+          ? 40 * (1 - phase3Progress)
+          : 0
+
+      const phase4Progress =
+        scrollProgress > phase3End
+          ? Math.min((scrollProgress - phase3End) / (phase4End - phase3End), 1)
+          : 0
+      const logoOpacity = 1 - phase4Progress
+
+      const phase5Progress =
+        scrollProgress > phase4End
+          ? Math.min((scrollProgress - phase4End) / (phase5End - phase4End), 1)
+          : 0
+      const isPillDrilling = phase5Progress > 0 && phase5Progress < 1
+      const BAR_SHAKE = 1.2
+      const LOGO_SHAKE = 6
+      const barShakeX = useMemo(() => isPillDrilling ? Math.sin(scrollY * 0.7) * BAR_SHAKE : 0, [scrollY, isPillDrilling])
+      const barShakeY = useMemo(() => isPillDrilling ? Math.cos(scrollY * 0.9) * BAR_SHAKE * 0.6 : 0, [scrollY, isPillDrilling])
+      const logoExtraShakeX = useMemo(() => isPillDrilling ? Math.sin(scrollY * 0.7) * (LOGO_SHAKE - BAR_SHAKE) : 0, [scrollY, isPillDrilling])
+      const logoExtraShakeY = useMemo(() => isPillDrilling ? Math.cos(scrollY * 0.9) * (LOGO_SHAKE - BAR_SHAKE) * 0.6 : 0, [scrollY, isPillDrilling])
+
+      const phase6Progress =
+        scrollProgress > phase5End
+          ? Math.min((scrollProgress - phase5End) / (1 - phase5End), 1)
+          : 0
+
+      const isShaking = phase2Progress > 0.4 && logoOpacity > 0
+      const drillingProgress = isDrilling ? (phase2Progress - 0.4) / 0.6 : 0
+      const phase3ShakeProgress = scrollProgress > phase2End ? 1 - phase4Progress : drillingProgress
+      const shakeIntensity = phase3ShakeProgress * 8
+      const shakeX = useMemo(() => isShaking ? Math.sin(scrollY * 0.5) * shakeIntensity : 0, [scrollY, isShaking, shakeIntensity])
+      const shakeY = useMemo(() => isShaking ? Math.cos(scrollY * 0.7) * shakeIntensity * 0.5 : 0, [scrollY, isShaking, shakeIntensity])
+
+      const darkRiseT = Math.max(0, Math.min(1, (scrollProgress - phase1End) / (phase3End - phase1End)))
+      const easedDarkRise = darkRiseT < 0.5 ? 4 * darkRiseT * darkRiseT * darkRiseT : 1 - Math.pow(-2 * darkRiseT + 2, 3) / 2
+      const darkBgHeight = easedDarkRise * 100
+
+      const drillingProgressRef = useRef(0)
+      const darkBgHeightRef = useRef(0)
+      drillingProgressRef.current = drillingProgress
+      darkBgHeightRef.current = darkBgHeight
+
+      useEffect(() => {
+        if (!isDrilling) return
+        const interval = setInterval(() => {
+          const intensity = Math.max(0.4, drillingProgressRef.current)
+          const particleCount = Math.floor(3 + intensity * 5)
+          const contactY = window.innerHeight * (1 - darkBgHeightRef.current / 100)
+          const newParticles = []
+          for (let i = 0; i < particleCount; i++) {
+            particleIdRef.current++
+            const angle = Math.PI + Math.random() * Math.PI
+            const speed = Math.random() * 14 + 10
+            newParticles.push({
+              id: particleIdRef.current,
+              x: window.innerWidth / 2 + (Math.random() - 0.5) * 120,
+              y: contactY + (Math.random() - 0.5) * 6,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              size: Math.random() * 10 + 4,
+              opacity: 1,
+              rotation: Math.random() * 360,
+              color: "#2E2820",
+            })
+          }
+          setParticles(prev => [...prev, ...newParticles])
+        }, 50)
+        return () => clearInterval(interval)
+      }, [isDrilling])
+
+      const phase5ProgressRef = useRef(0)
+      phase5ProgressRef.current = phase5Progress
+      useEffect(() => {
+        if (!isPillDrilling) return
+        const interval = setInterval(() => {
+          const t = phase5ProgressRef.current
+          const BAR_H_VH = 11
+          const STRIP_BOTTOM_VH = 8
+          const LOGO_W_VW = 18
+          const startLead = 100 + BAR_H_VH
+          const endLead = -(LOGO_W_VW + 8)
+          const barLeftPx = (startLead + (endLead - startLead) * t) * window.innerWidth / 100
+          const spawnX = barLeftPx
+          const spawnY = window.innerHeight - (STRIP_BOTTOM_VH * window.innerHeight / 100) - (BAR_H_VH * window.innerHeight / 100) / 2
+          const newParticles = []
+          for (let i = 0; i < 5; i++) {
+            particleIdRef.current++
+            const angle = -Math.PI / 2 + Math.random() * Math.PI
+            const speed = Math.random() * 14 + 10
+            newParticles.push({
+              id: particleIdRef.current,
+              x: spawnX + (Math.random() - 0.5) * 6,
+              y: spawnY + (Math.random() - 0.5) * 60,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              size: Math.random() * 8 + 3,
+              opacity: 1,
+              rotation: Math.random() * 360,
+              color: "#C9A97A",
+            })
+          }
+          setParticles(prev => [...prev, ...newParticles])
+        }, 60)
+        return () => clearInterval(interval)
+      }, [isPillDrilling])
+
+
+      useEffect(() => {
+        const DURATION = 2600
+        const startTime = performance.now()
+        let raf = null
+        const tick = () => {
+          const t = Math.min((performance.now() - startTime) / DURATION, 1)
+          setLoadProgress(t)
+          if (t < 1) raf = requestAnimationFrame(tick)
+        }
+        raf = requestAnimationFrame(tick)
+        return () => { if (raf !== null) cancelAnimationFrame(raf) }
+      }, [])
+
+      useEffect(() => {
+        if (!isTransitioning) return
+        const DURATION = 2400
+        const startTime = performance.now()
+        let raf = null
+        const tick = () => {
+          const t = Math.min((performance.now() - startTime) / DURATION, 1)
+          setTransitionProgress(t)
+          if (t < 1) raf = requestAnimationFrame(tick)
+          else window.location.href = "careers.html"
+        }
+        raf = requestAnimationFrame(tick)
+        const particleInterval = setInterval(() => {
+          const t = Math.min((performance.now() - startTime) / DURATION, 1)
+          const sweepT = Math.min(t / 0.6, 1)
+          if (sweepT >= 1) return
+          // Bar top sweeps from 100vh (below) to -130vh (above). Particles
+          // spawn near the leading (top) edge of the bar — roughly where
+          // the rotated logo's top sits — and fan DOWNWARD as drill swarf.
+          const barTopVh = 100 - 230 * sweepT
+          const spawnYPx = (barTopVh + 12) * window.innerHeight / 100
+          const spawnXPx = window.innerWidth / 2
+          const burst = []
+          for (let i = 0; i < 3; i++) {
+            particleIdRef.current++
+            // 180° downward fan: angles in [0, π] → sin ≥ 0 → vy down.
+            const angle = Math.random() * Math.PI
+            const speed = Math.random() * 18 + 12
+            burst.push({
+              id: particleIdRef.current,
+              x: spawnXPx + (Math.random() - 0.5) * window.innerWidth * 0.6,
+              y: spawnYPx + (Math.random() - 0.5) * 30,
+              vx: Math.cos(angle) * speed,
+              vy: Math.sin(angle) * speed,
+              size: Math.random() * 10 + 4,
+              opacity: 1,
+              rotation: Math.random() * 360,
+              color: "#2E2820",
+            })
+          }
+          setParticles(p => [...p, ...burst])
+        }, 50)
+        return () => {
+          if (raf !== null) cancelAnimationFrame(raf)
+          clearInterval(particleInterval)
+        }
+      }, [isTransitioning])
+
+      useEffect(() => {
+        if (particles.length === 0) return
+        const interval = setInterval(() => {
+          setParticles(prev =>
+            prev
+              .map(p => ({ ...p, x: p.x + p.vx, y: p.y + p.vy, vy: p.vy + 0.8, opacity: p.opacity - 0.03, rotation: p.rotation + p.vx * 2 }))
+              .filter(p => p.opacity > 0 && p.y < window.innerHeight + 50)
+          )
+        }, 16)
+        return () => clearInterval(interval)
+      }, [particles.length])
+
+      const headlineTranslateY = (1 - phase6Progress) * 60
+      const headlineOpacity = phase6Progress
+
+      return (
+        <div ref={containerRef} className="relative" style={{ fontFamily: "'General Sans', system-ui, sans-serif" }}>
+          <div className="h-[600vh]">
+            <div className="fixed inset-0 overflow-hidden">
+              <div className="absolute inset-0" style={{ backgroundColor: "#C9A97A" }}>
+                {/* CAREERS button — pulled OUT of the mix-blend chrome wrapper
+                    so its hover transform doesn't create a new stacking
+                    context that would break the parent's mix-blend-mode
+                    (which was causing the button to visually disappear on
+                    hover).  Also stays fully visible regardless of the
+                    chrome opacity fade during phase 4+, so it never
+                    becomes an invisible-but-clickable hazard. */}
+                <a
+                  href="careers.html"
+                  className="careers-btn load-rise absolute right-3 top-3 z-[100] inline-flex items-center rounded-full border px-3 py-1 text-[11px] tracking-[0.18em] transition-colors md:right-6 md:top-6 md:px-6 md:py-2 md:text-sm"
+                  style={{
+                    backgroundColor: "rgba(46, 40, 32, 0.65)",
+                    backdropFilter: "blur(6px)",
+                    WebkitBackdropFilter: "blur(6px)",
+                    borderColor: "#C9A97A",
+                    color: "#C9A97A",
+                    animationDelay: "1850ms",
+                  }}
+                >
+                  {/* Inner span carries the hover vibration.  Applying the
+                      transform to the <a> itself was breaking the anchor's
+                      own load-rise animation (via inline animationDelay
+                      leaking into the vibration's animation shorthand)
+                      and making the button vanish on hover. */}
+                  <span className="careers-btn-label">CAREERS</span>
+                </a>
+                <div className="pointer-events-none absolute inset-0" style={{ color: "#C9A97A", mixBlendMode: "difference", opacity: 1 - phase4Progress }}>
+                  <div className="load-rise absolute left-3 top-3 flex items-center gap-2 text-[11px] tracking-tight md:left-6 md:top-6 md:gap-3 md:text-base" style={{ animationDelay: "1700ms" }}>
+                    <span aria-hidden>•</span>
+                    <span className="font-medium">Adelanto, California</span>
+                    <span className="ml-1 hidden opacity-90 md:ml-2 md:inline">34.6577° N , -117.3747°</span>
+                  </div>
+                  <style>{`
+                    @keyframes cornerPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.18);opacity:.82} }
+                    @keyframes loadRise { from{transform:translateY(40px);opacity:0} to{transform:translateY(0);opacity:1} }
+                    .load-rise { animation: loadRise 1300ms cubic-bezier(0.16,1,0.3,1) backwards; }
+                    @keyframes scrollBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(10px)} }
+                    @keyframes btnVibrate { 0%{transform:translate(-1.5px,1px)} 20%{transform:translate(1.5px,-1.5px)} 40%{transform:translate(-1px,-1px)} 60%{transform:translate(1.5px,1px)} 80%{transform:translate(-1px,1.5px)} 100%{transform:translate(-1.5px,1px)} }
+                    .btn-vibrate:hover { animation: btnVibrate 110ms steps(1) infinite; }
+                    .careers-btn:hover .careers-btn-label { animation: btnVibrate 110ms steps(1) infinite; display: inline-block; }
+                    .careers-btn-label { display: inline-block; }
+                  `}</style>
+                  <div className="load-rise absolute left-3 top-[60px] md:left-6 md:top-[90px]" style={{ transform: `translate(${-scrollProgress * 80}px, ${-scrollProgress * 80}px)`, animationDelay: "2000ms" }}>
+                    <div className="h-[18px] w-[18px] md:h-[26px] md:w-[26px]" style={{ backgroundColor: "#C9A97A", clipPath: "polygon(0 0, 100% 0, 0 100%)", animation: "cornerPulse 2s ease-in-out infinite", transformOrigin: "top left" }} />
+                  </div>
+                  <div className="load-rise absolute right-3 bottom-6 md:right-6 md:bottom-10" style={{ transform: `translate(${scrollProgress * 80}px, ${scrollProgress * 80}px)`, animationDelay: "2150ms" }}>
+                    <div className="h-[18px] w-[18px] md:h-[26px] md:w-[26px]" style={{ backgroundColor: "#C9A97A", clipPath: "polygon(100% 0, 100% 100%, 0 100%)", animation: "cornerPulse 2s ease-in-out infinite", transformOrigin: "bottom right" }} />
+                  </div>
+                  <div className="absolute bottom-[110px] left-0 right-0 flex flex-col items-start gap-y-4 px-[4vw] md:bottom-[210px] md:flex-row md:items-start md:justify-between md:gap-y-0">
+                    {/* Tagline — large, dominant, anchors the left edge */}
+                    <div className="load-rise text-[20px] font-light leading-[0.95] tracking-tight md:text-[60px]" style={{ animationDelay: "2350ms" }}>
+                      Unlocking the Underground.
+                    </div>
+                    {/* Wright Brothers quote — smaller, italic, right-aligned, max-width
+                        capped so it reads as a clean two-line attribution rather than
+                        running across the band. */}
+                    <div
+                      className="load-rise text-left text-sm font-light italic leading-[1.35] tracking-tight md:pt-[0.4em] md:text-right md:text-xl"
+                      style={{ animationDelay: "2550ms" }}
+                    >
+                      {easterEggUnlocked ? (
+                        <div>Inspired by Emma He.</div>
+                      ) : (
+                        <>
+                          <div className="whitespace-nowrap">The Wright Brothers unlocked the skies.</div>
+                          <div className="whitespace-nowrap">We have unlocked the earth.</div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="absolute bottom-6 left-1/2 md:bottom-12" style={{ transform: "translateX(-50%)" }}>
+                    <div className="load-rise" style={{ animationDelay: "2750ms" }}>
+                      <div style={{ animation: "scrollBob 1.6s ease-in-out infinite" }} aria-hidden>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-5 md:h-10 md:w-8" viewBox="0 0 24 30" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 4 v22" /><path d="M5 19 l7 7 l7 -7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <svg aria-hidden style={{ position: "absolute", width: 0, height: 0, pointerEvents: "none" }}>
+                  <defs>
+                    <filter id="dune-tint" colorInterpolationFilters="sRGB">
+                      <feColorMatrix type="matrix" values="0 0 0 0 0.788  0 0 0 0 0.663  0 0 0 0 0.478  0 0 0 1 0" />
+                    </filter>
+                  </defs>
+                </svg>
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center transition-none" style={{ transform: `translateY(${introTopOffsetVh + logoTranslateY}vh) translate(${shakeX}px, ${shakeY}px)`, opacity: logoOpacity * Math.max(0, Math.min(1, (loadProgress - 0.6) / 0.15)), filter: "url(#dune-tint)", mixBlendMode: "difference" }}>
+                  <Logo style={{ width: `${logoWidthVw}vw` }} pivotProgress={pivotProgress} onLetterHover={handleLetterHover} />
+                </div>
+                {isDrilling && <div className="absolute bottom-0 left-0 right-0 h-1" style={{ opacity: drillingProgress * 0.5, backgroundColor: "#8B7355" }} />}
+              </div>
+              <div className="absolute inset-x-0 bottom-0 transition-none" style={{ height: `${darkBgHeight}%`, backgroundColor: "#2E2820" }}>
+                {phase4Progress >= 1 && (() => {
+                  const BAR_H_VH = 11, STRIP_BOTTOM_VH = 8, LOGO_W_VW = 18
+                  const startLead = 100 + BAR_H_VH, endLead = -(LOGO_W_VW + 8)
+                  const drillT = Math.min(phase5Progress, 1)
+                  const barLeftVw = startLead + (endLead - startLead) * drillT
+                  const stillDrilling = phase5Progress < 1
+                  // Right edge of the "E" glyph in viewport vw — tether
+                  // anchors here.
+                  const eRightVw = barLeftVw + 1.1 + LOGO_W_VW
+                  // Icons move at the SAME rate as the dune lockup so the
+                  // spacing between the lockup and each icon — AND
+                  // between adjacent icons — stays constant for the
+                  // entire phase 5.  The lockup travels (startLead −
+                  // endLead) vw over phase 5; each icon shifts by the
+                  // same amount, landing at its final position exactly
+                  // when the lockup finishes its drill.
+                  const lockupTravelVw = startLead - endLead
+                  const iconFinals = [35, 45, 55, 65]
+                  const iconXs = iconFinals.map(f => f + lockupTravelVw * (1 - drillT))
+                  const fadeIn = Math.min(1, phase5Progress / 0.15)
+                  const fadeOut = phase5Progress < 0.92
+                    ? 1
+                    : Math.max(0, 1 - (phase5Progress - 0.92) / 0.08)
+                  const stripCenterFromBottomVh = STRIP_BOTTOM_VH + BAR_H_VH / 2
+                  const tetherLeft  = eRightVw
+                  // Extend tether past the rightmost icon so the line
+                  // ALWAYS reaches the bar's right edge regardless of
+                  // where the icons currently sit.
+                  const tetherRight = Math.max(110, iconXs[iconXs.length - 1] + 6)
+                  // Tether stays fully visible once it's faded in — no fade-out.
+                  const tetherOpacity = fadeIn
+                  const iconOpacity = fadeIn
+                  // Icon size: 2vw on desktop, but never smaller than 22px so
+                  // the icons stay visible on mobile / narrow viewports.
+                  const vwPx = typeof window !== "undefined" ? window.innerWidth / 100 : 12.8
+                  const ICON_PX = Math.max(22, 2 * vwPx)
+                  const ICON_W_VW = ICON_PX / vwPx
+                  const CLEARANCE_VW = 0.5
+                  const HALF_AVOID = ICON_W_VW / 2 + CLEARANCE_VW
+                  const sortedIconXs = [...iconXs].sort((a, b) => a - b)
+                  const tetherSegments = []
+                  let cursor = tetherLeft
+                  for (const iconX of sortedIconXs) {
+                    const iconL = iconX - HALF_AVOID
+                    const iconR = iconX + HALF_AVOID
+                    if (iconR < cursor) continue
+                    if (iconL > tetherRight) break
+                    if (cursor < iconL) {
+                      tetherSegments.push([cursor, Math.min(iconL, tetherRight)])
+                    }
+                    cursor = iconR
+                  }
+                  if (cursor < tetherRight) tetherSegments.push([cursor, tetherRight])
+                  // Ripple shake: each element along the chain (icons +
+                  // tether segments) shakes at a slightly different
+                  // frequency AND with a phase delay proportional to
+                  // its distance from the dune lockup's E.  The visual
+                  // result is a wave that ripples DOWN the chain from
+                  // the source (lockup) to the end of the tether.
+                  const SOCIAL_SHAKE = 2.5
+                  const PHASE_PER_VW = 0.07
+                  const rippleShake = (xVw, freqJitter) => {
+                    if (!isPillDrilling) return { x: 0, y: 0 }
+                    const phase = Math.max(0, xVw - eRightVw) * PHASE_PER_VW
+                    const fX = 0.7 + freqJitter
+                    const fY = 0.9 + freqJitter * 1.3
+                    return {
+                      x: Math.sin(scrollY * fX - phase) * SOCIAL_SHAKE,
+                      y: Math.cos(scrollY * fY - phase) * SOCIAL_SHAKE * 0.6,
+                    }
+                  }
+                  const iconShakes = iconXs.map((x, i) => rippleShake(x, i * 0.04))
+                  const tetherShakes = tetherSegments.map(([s, e], i) =>
+                    rippleShake((s + e) / 2, i * 0.025),
+                  )
+                  const SOCIALS = [
+                    { name: "x",         path: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" },
+                    { name: "youtube",   path: "M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" },
+                    { name: "linkedin",  path: "M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.063 2.063 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" },
+                    { name: "instagram", path: "M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24s3.668-.014 4.948-.072c4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" },
+                  ]
+                  return (
+                    <>
+                      {/* Bone bar with the lockup riding the leading edge. */}
+                      <div className="absolute flex items-center justify-start" style={{ left: `${barLeftVw}vw`, right: 0, bottom: `${STRIP_BOTTOM_VH}vh`, height: `${BAR_H_VH}vh`, backgroundColor: "#C9A97A", borderRadius: "9999px 0 0 9999px", transform: stillDrilling ? `translate(${barShakeX}px, ${barShakeY}px)` : "none" }}>
+                        <div style={{ transform: `translate(${logoExtraShakeX}px, ${logoExtraShakeY}px)`, marginLeft: `${BAR_H_VH * 0.18}vh`, opacity: 1 - Math.max(0, Math.min(1, (phase5Progress - 0.92) / 0.08)) }}>
+                          <Logo style={{ width: `${LOGO_W_VW}vw` }} pivotProgress={0} />
+                        </div>
+                      </div>
+                      {/* Tether — two parallel black lines (a "conduit")
+                          spanning from the DUNE logo's E to the bar's
+                          right edge.  Rendered as discrete segments
+                          that skip around each social icon for clean
+                          spacing.  Each segment is a single div with
+                          top + bottom borders giving the dual-line look. */}
+                      {tetherSegments.map(([s, e], i) => {
+                        const sh = tetherShakes[i]
+                        return (
+                          <div
+                            key={`tether-${i}`}
+                            style={{
+                              position: "absolute",
+                              left: `${s}vw`,
+                              width: `${Math.max(0, e - s)}vw`,
+                              bottom: `calc(${stripCenterFromBottomVh}vh - 3px)`,
+                              height: "6px",
+                              boxSizing: "border-box",
+                              borderTop: "1.5px solid #0E0C0A",
+                              borderBottom: "1.5px solid #0E0C0A",
+                              opacity: tetherOpacity,
+                              transform: `translate(${sh.x}px, ${sh.y}px)`,
+                            }}
+                          />
+                        )
+                      })}
+                      {/* Social icons — drag along the tether, then settle
+                          equally spaced (35/45/55/65vw) inside the bar. */}
+                      {SOCIALS.map((s, i) => {
+                        const sh = iconShakes[i]
+                        return (
+                        <a
+                          key={s.name}
+                          href="#"
+                          aria-label={s.name}
+                          className="pointer-events-auto absolute flex items-center justify-center"
+                          style={{
+                            left: `${iconXs[i]}vw`,
+                            bottom: `${stripCenterFromBottomVh}vh`,
+                            width: `${ICON_PX}px`,
+                            height: `${ICON_PX}px`,
+                            transform: `translate(-50%, 50%) translate(${sh.x}px, ${sh.y}px)`,
+                            color: "#0E0C0A",
+                            opacity: iconOpacity,
+                          }}
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            width="100%"
+                            height="100%"
+                            fill="currentColor"
+                            aria-hidden
+                          >
+                            <path d={s.path} />
+                          </svg>
+                        </a>
+                        )
+                      })}
+                    </>
+                  )
+                })()}
+                {phase5Progress >= 1 && (
+                  <div className="absolute inset-x-0 flex flex-col items-center gap-8 px-6" style={{ top: "32vh", opacity: headlineOpacity, transform: `translateY(${headlineTranslateY}px)`, color: "#C9A97A" }}>
+                    <h1 className="text-balance text-center text-[25px] font-medium leading-tight tracking-tight md:text-[82px]">Unearth your future at Dune.</h1>
+                    <button
+                      className="btn-vibrate rounded-full border-2 px-[26px] py-[10px] text-[10px] font-semibold tracking-[0.18em] transition-colors md:px-[58px] md:py-[19px] md:text-[16px] hover:bg-[#0E0C0A] hover:text-[#C9A97A]"
+                      style={{ backgroundColor: "#C9A97A", borderColor: "#C9A97A", color: "#0E0C0A" }}
+                      onClick={() => setIsTransitioning(true)}
+                    >
+                      SEE ALL WORK
+                    </button>
+                  </div>
+                )}
+              </div>
+              {particles.map(particle => (
+                <div key={particle.id} className="pointer-events-none absolute" style={{ left: particle.x, top: particle.y, width: particle.size, height: particle.size, opacity: particle.opacity, transform: `rotate(${particle.rotation}deg)`, backgroundColor: particle.color }} />
+              ))}
+            </div>
+          </div>
+          {loadProgress < 1 && (() => {
+            const t = loadProgress
+            const LOGO_MARGIN_VW = 8
+            const sweepT = Math.min(t / 0.55, 1)
+            const eased = 1 - Math.pow(1 - sweepT, 3)
+            const startLeftVw = 110, parkLeftVw = -(LOGO_MARGIN_VW - 4)
+            const barLeftVw = startLeftVw + (parkLeftVw - startLeftVw) * eased
+            const slagOpacity = Math.max(0, 1 - Math.max(0, t - 0.2) / 0.35)
+            const barOpacity = 1 - Math.max(0, Math.min(1, (t - 0.6) / 0.15))
+            return (
+              <div className="pointer-events-none fixed inset-0 z-[9998]">
+                <div className="absolute inset-0" style={{ backgroundColor: "#2E2820", opacity: slagOpacity }} />
+                <div className="absolute flex items-center justify-start" style={{ left: `${barLeftVw}vw`, right: 0, top: 0, bottom: 0, backgroundColor: "#C9A97A", borderRadius: "9999px 0 0 9999px", opacity: barOpacity }}>
+                  <div style={{ marginLeft: `${LOGO_MARGIN_VW}vw`, transform: `translateY(-10vh) translate(${Math.sin(t * 2.6 * 50) * 8}px, ${Math.cos(t * 2.6 * 60) * 5}px)`, filter: "url(#dune-tint)", mixBlendMode: "difference" }}>
+                    <Logo style={{ width: "92vw" }} pivotProgress={0} />
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
+          {isTransitioning && (() => {
+            const t = transitionProgress
+            // Vertical sweep — full-viewport-WIDTH bar with rounded TOP
+            // edge translates from below the screen to above, leaving a
+            // haze blanket behind.  Vertical DUNE lockup (pivotProgress
+            // = 1) rides at the leading top edge, flipped 180° so the
+            // crest points UP.  Bar height is taller than the viewport
+            // so the screen is fully washed mid-sweep.
+            const sweepT = Math.min(t / 0.5, 1)
+            const startTopVh = 100   // bar fully below viewport
+            const endTopVh   = -290  // bar fully above viewport (logo exits w/ it)
+            const barTopVh   = startTopVh + (endTopVh - startTopVh) * sweepT
+
+            const blanketOpacity = Math.min(Math.max((t - 0.45) / 0.2, 0), 1)
+
+            const elapsedSec = t * 2.4
+            const shakeX = Math.sin(elapsedSec * 50) * 8
+            const shakeY = Math.cos(elapsedSec * 60) * 5
+
+            return (
+              <div className="pointer-events-none fixed inset-0 z-[9999] overflow-hidden">
+                <div className="absolute inset-0" style={{ backgroundColor: "#F7F2E8", opacity: blanketOpacity }} />
+                {particles.map(p => (
+                  <div key={`tx-${p.id}`} className="pointer-events-none absolute" style={{ left: p.x, top: p.y, width: p.size, height: p.size, opacity: p.opacity, transform: `rotate(${p.rotation}deg)`, backgroundColor: p.color }} />
+                ))}
+                {/* Full-width bar — 100vw × 500vh, rounded TOP only.
+                    Long body keeps the trailing edge well below the
+                    viewport bottom for the entire sweep, so the page
+                    is always fully covered (no gap exposing the slag
+                    background between bar and viewport bottom). */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    right: 0,
+                    top: `${barTopVh}vh`,
+                    height: "500vh",
+                    backgroundColor: "#F7F2E8",
+                    borderRadius: "9999px 9999px 0 0",
+                  }}
+                >
+                  {/* Logo at the top (leading edge) of the bar — 2× the
+                      previous size so the vertical stack overwhelms the
+                      viewport.  Outer wrapper centers + applies drilling
+                      shake; inner wrapper applies the 180° upside-down
+                      flip so the crest points UP. */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      left: "50%",
+                      top: "85vh",
+                      transform: `translateX(-50%) translate(${shakeX}px, ${shakeY}px)`,
+                    }}
+                  >
+                    <div style={{ transform: "rotate(180deg)" }}>
+                      <Logo style={{ width: "84vw" }} pivotProgress={1} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
+        </div>
+      )
+    }
+
+    const LOGO_SOURCE_W = 2063
+    const LOGO_SOURCE_H = 441
+    const LOGO_HEIGHT_RATIO = LOGO_SOURCE_H / LOGO_SOURCE_W
+    const STACK_SPACING = 0.24
+    const GLYPHS = [
+      { label: "crest", file: "crest.png", w: 0.2191, h: 0.9955 * LOGO_HEIGHT_RATIO, startCenter: { x: -0.390, y: 0 }, endCenter: { x: 0, y: STACK_SPACING * 2 }, arcDir: "linear", endRotation: -90 },
+      { label: "D", file: "D.png", w: 0.1716, h: 0.9705 * LOGO_HEIGHT_RATIO, startCenter: { x: -0.186, y: 0 }, endCenter: { x: 0, y: -STACK_SPACING * 2 }, arcDir: "ccw", endRotation: 0 },
+      { label: "U", file: "U.png", w: 0.1648, h: 0.9864 * LOGO_HEIGHT_RATIO, startCenter: { x: 0.017, y: 0 }, endCenter: { x: 0, y: -STACK_SPACING }, arcDir: "ccw", endRotation: 0 },
+      { label: "N", file: "N.png", w: 0.1643, h: 0.9841 * LOGO_HEIGHT_RATIO, startCenter: { x: 0.212, y: 0 }, endCenter: { x: 0, y: 0 }, arcDir: "ccw", endRotation: 0 },
+      { label: "E", file: "E.png", w: 0.1716, h: 0.9683 * LOGO_HEIGHT_RATIO, startCenter: { x: 0.414, y: 0 }, endCenter: { x: 0, y: STACK_SPACING }, arcDir: "ccw", endRotation: 0 },
+    ]
+
+    function arcPos(start, end, t, dir) {
+      if (dir === "linear") return { x: start.x + (end.x - start.x) * t, y: start.y + (end.y - start.y) * t }
+      const dx = end.x - start.x, dy = end.y - start.y
+      const sign = dir === "cw" ? 1 : -1
+      const perpX = -dy * sign, perpY = dx * sign
+      const bulge = 0.55
+      const cx = (start.x + end.x) / 2 + perpX * bulge
+      const cy = (start.y + end.y) / 2 + perpY * bulge
+      const omt = 1 - t
+      return { x: omt * omt * start.x + 2 * omt * t * cx + t * t * end.x, y: omt * omt * start.y + 2 * omt * t * cy + t * t * end.y }
+    }
+
+    function Logo({ className, style, pivotProgress = 0, onLetterHover }) {
+      const t = Math.max(0, Math.min(1, pivotProgress))
+      return (
+        <div className={className} style={{ position: "relative", aspectRatio: `${LOGO_SOURCE_W} / ${LOGO_SOURCE_H}`, containerType: "inline-size", ...style }}>
+          <style>{`
+            @keyframes letterVibrate { 0%{transform:translate(-2px,1.5px)} 20%{transform:translate(1.5px,-2px)} 40%{transform:translate(-1px,-1.5px)} 60%{transform:translate(2px,1px)} 80%{transform:translate(-1.5px,2px)} 100%{transform:translate(-2px,1.5px)} }
+            .logo-letter { display: block; width: 100%; height: 100%; pointer-events: auto; }
+            .logo-letter:hover { animation: letterVibrate 90ms steps(1) infinite; }
+          `}</style>
+          {GLYPHS.map(g => {
+            const p = arcPos(g.startCenter, g.endCenter, t, g.arcDir)
+            const rotation = g.endRotation * t
+            return (
+              <div key={g.label} style={{ position: "absolute", top: "50%", left: "50%", width: `${g.w * 100}cqw`, height: `${g.h * 100}cqw`, transform: `translate(-50%, -50%) translate(${p.x * 100}cqw, ${p.y * 100}cqw) rotate(${rotation}deg)`, transformOrigin: "center center" }}>
+                <div className="logo-letter"
+                  onMouseEnter={onLetterHover ? () => onLetterHover(g.label, "enter") : undefined}
+                  onMouseLeave={onLetterHover ? () => onLetterHover(g.label, "leave") : undefined}>
+                  <img src={`logo-letters/${g.file}`} alt={g.label} draggable={false} style={{ width: "100%", height: "100%", display: "block", pointerEvents: "none" }} />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<ScrollAnimation />)
+  </script>
+
+  <!-- Manual Babel invocation so we can pin the JSX runtime to classic.
+       (Recent Babel Standalone versions default the react preset to
+       runtime: "automatic", which emits `import { jsx } from
+       "react/jsx-runtime"` — that import breaks inside a plain
+       <script> tag.  Passing runtime: "classic" makes Babel emit
+       `React.createElement(...)` calls, which work in a normal script.) -->
+  <script>
+    (function () {
+      var src = document.getElementById("app-source").textContent;
+      var out = Babel.transform(src, {
+        filename: "app.jsx",
+        presets: ["typescript", ["react", { runtime: "classic" }]],
+      });
+      var s = document.createElement("script");
+      s.textContent = out.code;
+      document.body.appendChild(s);
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DUNE — Font Options</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Oswald:wght@500;700&family=Bebas+Neue&family=Anton&family=Teko:wght@600;700&family=Archivo+Black&family=Barlow+Condensed:wght@600;700;800&family=Saira+Extra+Condensed:wght@700;800&family=Fjalla+One&family=Rajdhani:wght@600;700&family=Chakra+Petch:wght@600;700&family=Orbitron:wght@700;900&family=Michroma&family=Audiowide&family=Russo+One&family=Exo+2:wght@700;800;900&family=Titillium+Web:wght@700;900&family=Yanone+Kaffeesatz:wght@600;700&family=Kanit:wght@700;800;900&family=Jura:wght@400&family=Playfair+Display:wght@700;800;900&family=DM+Serif+Display&family=Libre+Baskerville:wght@700&family=Lora:wght@700&family=Cormorant+Garamond:wght@600;700&family=Noto+Serif+Display:wght@700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Outfit:wght@700;800;900&family=Sora:wght@700;800&family=Urbanist:wght@700;800;900&family=Manrope:wght@700;800&family=General+Sans:wght@700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0908;
+      color: #e8dcc8;
+      font-family: 'Jura', sans-serif;
+      padding: 60px 48px 120px;
+    }
+
+    .page-title {
+      font-family: 'Jura', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #5C5040;
+      margin-bottom: 12px;
+    }
+
+    .page-heading {
+      font-family: 'Big Shoulders Display', sans-serif;
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: #C9A97A;
+      margin-bottom: 8px;
+    }
+
+    .page-sub {
+      font-family: 'Jura', sans-serif;
+      font-size: 13px;
+      color: #5C5040;
+      margin-bottom: 64px;
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    .category {
+      margin-bottom: 56px;
+    }
+
+    .category-label {
+      font-family: 'Jura', sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: #7A4A28;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1e1a15;
+      margin-bottom: 32px;
+    }
+
+    .font-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+    }
+
+    .font-card {
+      background: #131110;
+      padding: 40px 36px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .font-card:hover {
+      background: #1a1714;
+      border-color: #2E2820;
+    }
+
+    .font-num {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      font-family: 'Jura', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: #2E2820;
+    }
+
+    .font-name {
+      font-family: 'Jura', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: #5C5040;
+      margin-bottom: 16px;
+    }
+
+    .font-sample-heading {
+      font-size: 38px;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #EDE0C4;
+      margin-bottom: 12px;
+    }
+
+    .font-sample-caps {
+      font-size: 32px;
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #EDE0C4;
+      margin-bottom: 12px;
+    }
+
+    .font-context {
+      font-family: 'Jura', sans-serif;
+      font-size: 12px;
+      color: #3a3028;
+      line-height: 1.6;
+      margin-top: 8px;
+    }
+
+    .font-tag {
+      display: inline-block;
+      font-family: 'Jura', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #7A4A28;
+      border: 1px solid #2E2820;
+      padding: 3px 8px;
+      margin-top: 14px;
+      margin-right: 4px;
+    }
+
+    .pick {
+      border-color: #C9A97A !important;
+      background: #161210 !important;
+    }
+
+    .pick::before {
+      content: 'TOP PICK';
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      font-family: 'Jura', sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.2em;
+      color: #C9A97A;
+      background: rgba(201,169,122,0.08);
+      padding: 2px 8px;
+    }
+
+    /* Individual font families */
+    .f-oswald { font-family: 'Oswald', sans-serif; }
+    .f-bebas { font-family: 'Bebas Neue', sans-serif; }
+    .f-anton { font-family: 'Anton', sans-serif; }
+    .f-teko { font-family: 'Teko', sans-serif; }
+    .f-archivo { font-family: 'Archivo Black', sans-serif; }
+    .f-barlow { font-family: 'Barlow Condensed', sans-serif; }
+    .f-saira { font-family: 'Saira Extra Condensed', sans-serif; }
+    .f-fjalla { font-family: 'Fjalla One', sans-serif; }
+    .f-rajdhani { font-family: 'Rajdhani', sans-serif; }
+    .f-chakra { font-family: 'Chakra Petch', sans-serif; }
+    .f-orbitron { font-family: 'Orbitron', sans-serif; }
+    .f-michroma { font-family: 'Michroma', sans-serif; }
+    .f-audiowide { font-family: 'Audiowide', sans-serif; }
+    .f-russo { font-family: 'Russo One', sans-serif; }
+    .f-exo { font-family: 'Exo 2', sans-serif; }
+    .f-titillium { font-family: 'Titillium Web', sans-serif; }
+    .f-yanone { font-family: 'Yanone Kaffeesatz', sans-serif; }
+    .f-kanit { font-family: 'Kanit', sans-serif; }
+    .f-bigshoulders { font-family: 'Big Shoulders Display', sans-serif; }
+    .f-playfair { font-family: 'Playfair Display', serif; }
+    .f-dmserif { font-family: 'DM Serif Display', serif; }
+    .f-baskerville { font-family: 'Libre Baskerville', serif; }
+    .f-lora { font-family: 'Lora', serif; }
+    .f-cormorant { font-family: 'Cormorant Garamond', serif; }
+    .f-notoserif { font-family: 'Noto Serif Display', serif; }
+    .f-jakarta { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .f-outfit { font-family: 'Outfit', sans-serif; }
+    .f-sora { font-family: 'Sora', sans-serif; }
+    .f-urbanist { font-family: 'Urbanist', sans-serif; }
+    .f-manrope { font-family: 'Manrope', sans-serif; }
+    .f-spacegrotesk { font-family: 'Space Grotesk', sans-serif; }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, #2E2820 20%, #2E2820 80%, transparent);
+      margin: 64px 0;
+    }
+
+    @media (max-width: 768px) {
+      .font-grid { grid-template-columns: 1fr; }
+      body { padding: 40px 24px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+  <p class="page-title">Dune Industries · Typography</p>
+  <h1 class="page-heading">Font Options</h1>
+  <p class="page-sub">Heading font candidates for the Dune website. Each shown in context with your Arid Forge palette. Grouped by character: bold condensed (like SpaceX), tech/industrial, and wide/geometric.</p>
+
+  <!-- ═══ CATEGORY 1: BOLD CONDENSED ════════════════ -->
+  <div class="category">
+    <p class="category-label">/ 01 — Bold Condensed · SpaceX Style</p>
+    <div class="font-grid">
+
+      <div class="font-card pick">
+        <span class="font-num">01</span>
+        <p class="font-name">Bebas Neue</p>
+        <p class="font-sample-caps f-bebas" style="font-size:44px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Clean, all-caps, ultra-condensed. Closest match to SpaceX headings. Great at large sizes.</p>
+        <span class="font-tag">All Caps Only</span>
+        <span class="font-tag">Condensed</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">02</span>
+        <p class="font-name">Anton</p>
+        <p class="font-sample-caps f-anton" style="font-size:42px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Bolder and tighter than Bebas. More aggressive, industrial feel. Single weight.</p>
+        <span class="font-tag">Impact Style</span>
+        <span class="font-tag">Heavy</span>
+      </div>
+
+      <div class="font-card pick">
+        <span class="font-num">03a</span>
+        <p class="font-name">Oswald — All Caps</p>
+        <p class="font-sample-caps f-oswald" style="font-weight:700; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Uppercase. Aggressive, commanding. Closest to SpaceX feel.</p>
+        <span class="font-tag">Uppercase</span>
+        <span class="font-tag">Bold</span>
+      </div>
+
+      <div class="font-card pick">
+        <span class="font-num">03b</span>
+        <p class="font-name">Oswald — Mixed Case</p>
+        <p class="font-sample-heading f-oswald" style="font-weight:700; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Mixed case. More approachable, editorial. Closer to Relativity's style.</p>
+        <span class="font-tag">Mixed Case</span>
+        <span class="font-tag">Editorial</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">03c</span>
+        <p class="font-name">Oswald — Lowercase</p>
+        <p class="font-sample-heading f-oswald" style="font-weight:700; font-size:40px; text-transform:none;">drilling beneath<br/>the surface</p>
+        <p class="font-context">All lowercase. Unconventional, modern, understated confidence.</p>
+        <span class="font-tag">Lowercase</span>
+        <span class="font-tag">Modern</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">04</span>
+        <p class="font-name">Barlow Condensed</p>
+        <p class="font-sample-caps f-barlow" style="font-weight:800; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">More refined condensed. Slightly rounder, modern aerospace feel. Good weight range.</p>
+        <span class="font-tag">Modern</span>
+        <span class="font-tag">Clean</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">05</span>
+        <p class="font-name">Saira Extra Condensed</p>
+        <p class="font-sample-caps f-saira" style="font-weight:800; font-size:42px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Ultra-narrow. Very tall letterforms. Maximum density and impact at large sizes.</p>
+        <span class="font-tag">Ultra Narrow</span>
+        <span class="font-tag">Dramatic</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">06</span>
+        <p class="font-name">Kanit</p>
+        <p class="font-sample-caps f-kanit" style="font-weight:800; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Angular, slightly futuristic. Distinctive diagonal cuts on letterforms. Aggressive but legible.</p>
+        <span class="font-tag">Angular</span>
+        <span class="font-tag">Futuristic</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CATEGORY 2: TECH / INDUSTRIAL ═════════════ -->
+  <div class="category">
+    <p class="category-label">/ 02 — Tech · Industrial · Geometric</p>
+    <div class="font-grid">
+
+      <div class="font-card pick">
+        <span class="font-num">07</span>
+        <p class="font-name">Chakra Petch</p>
+        <p class="font-sample-heading f-chakra" style="font-weight:700; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Squared-off, mechanical feel. Like type stamped on industrial equipment. Great for defense/engineering.</p>
+        <span class="font-tag">Mechanical</span>
+        <span class="font-tag">Defense</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">08</span>
+        <p class="font-name">Rajdhani</p>
+        <p class="font-sample-heading f-rajdhani" style="font-weight:700; font-size:42px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Sharp, technical. Open letterforms with angular terminals. HUD/telemetry vibes.</p>
+        <span class="font-tag">Technical</span>
+        <span class="font-tag">Sharp</span>
+      </div>
+
+      <div class="font-card pick">
+        <span class="font-num">09</span>
+        <p class="font-name">Teko</p>
+        <p class="font-sample-caps f-teko" style="font-weight:700; font-size:48px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Tall, squared, industrial. Great for big bold statements. Condensed but feels engineered.</p>
+        <span class="font-tag">Industrial</span>
+        <span class="font-tag">Engineered</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">10</span>
+        <p class="font-name">Titillium Web</p>
+        <p class="font-sample-heading f-titillium" style="font-weight:900; font-size:38px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">ESA's brand font. Technical but approachable. Wide range of weights. Space industry pedigree.</p>
+        <span class="font-tag">Space Industry</span>
+        <span class="font-tag">ESA</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">11</span>
+        <p class="font-name">Exo 2</p>
+        <p class="font-sample-heading f-exo" style="font-weight:800; font-size:38px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Geometric and futuristic. Rounded terminals, wide proportions. Modern tech feel.</p>
+        <span class="font-tag">Geometric</span>
+        <span class="font-tag">Wide</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">12</span>
+        <p class="font-name">Russo One</p>
+        <p class="font-sample-heading f-russo" style="font-size:36px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Blocky, strong, constructed feel. Like letters built from steel plates. Single weight, all business.</p>
+        <span class="font-tag">Blocky</span>
+        <span class="font-tag">Constructed</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CATEGORY 3: HIGH-CONTRAST SERIF (Impulse style) ══ -->
+  <div class="category">
+    <p class="category-label">/ 03 — High-Contrast Serif · Impulse / Relativity Style</p>
+    <div class="font-grid">
+
+      <div class="font-card pick">
+        <span class="font-num">13</span>
+        <p class="font-name">Playfair Display</p>
+        <p class="font-sample-heading f-playfair" style="font-weight:800; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">High stroke contrast, sharp serifs. Closest to the Impulse "Mobilizing Space" heading. Elegant yet bold.</p>
+        <span class="font-tag">High Contrast</span>
+        <span class="font-tag">Impulse Match</span>
+      </div>
+
+      <div class="font-card pick">
+        <span class="font-num">14</span>
+        <p class="font-name">DM Serif Display</p>
+        <p class="font-sample-heading f-dmserif" style="font-size:42px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Refined transitional serif. Strong thick/thin contrast. More classic and authoritative than Playfair.</p>
+        <span class="font-tag">Transitional</span>
+        <span class="font-tag">Authoritative</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">15</span>
+        <p class="font-name">Noto Serif Display</p>
+        <p class="font-sample-heading f-notoserif" style="font-weight:800; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Google's display serif. Very wide weight range. High contrast at heavy weights. Polished and professional.</p>
+        <span class="font-tag">Versatile</span>
+        <span class="font-tag">Professional</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">16</span>
+        <p class="font-name">Cormorant Garamond</p>
+        <p class="font-sample-heading f-cormorant" style="font-weight:700; font-size:44px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Tall, elegant, extreme contrast. More editorial/luxury feel. Distinctive at large sizes. Pairs well with tech sans body.</p>
+        <span class="font-tag">Editorial</span>
+        <span class="font-tag">Luxury</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">17</span>
+        <p class="font-name">Lora</p>
+        <p class="font-sample-heading f-lora" style="font-weight:700; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Moderate contrast serif. Slightly softer curves, contemporary feel. Good readability at smaller sizes too.</p>
+        <span class="font-tag">Contemporary</span>
+        <span class="font-tag">Readable</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">18</span>
+        <p class="font-name">Libre Baskerville</p>
+        <p class="font-sample-heading f-baskerville" style="font-weight:700; font-size:36px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Classic Baskerville revival. Traditional authority, old-world gravitas. Trust and permanence.</p>
+        <span class="font-tag">Classical</span>
+        <span class="font-tag">Gravitas</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CATEGORY 4: WIDE CLEAN SANS (Relativity style) ══ -->
+  <div class="category">
+    <p class="category-label">/ 04 — Wide Clean Sans · Relativity Space Style</p>
+    <div class="font-grid">
+
+      <div class="font-card pick">
+        <span class="font-num">19</span>
+        <p class="font-name">Outfit</p>
+        <p class="font-sample-heading f-outfit" style="font-weight:800; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Clean geometric sans with rounded warmth. Wide, confident proportions. Closest to Relativity's heading style.</p>
+        <span class="font-tag">Geometric</span>
+        <span class="font-tag">Relativity Match</span>
+      </div>
+
+      <div class="font-card pick">
+        <span class="font-num">20</span>
+        <p class="font-name">Sora</p>
+        <p class="font-sample-heading f-sora" style="font-weight:800; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Modern, wide, geometric. Slightly techy edge. Clean at all sizes. Feels like a startup that means business.</p>
+        <span class="font-tag">Modern</span>
+        <span class="font-tag">Wide</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">21a</span>
+        <p class="font-name">Plus Jakarta Sans — ExtraBold (800)</p>
+        <p class="font-sample-heading f-jakarta" style="font-weight:800; font-size:38px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Original weight shown. Bold and punchy.</p>
+        <span class="font-tag">ExtraBold</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">21b</span>
+        <p class="font-name">Plus Jakarta Sans — Bold (700)</p>
+        <p class="font-sample-heading f-jakarta" style="font-weight:700; font-size:38px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Slightly lighter. Still strong, more balanced.</p>
+        <span class="font-tag">Bold</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">21c</span>
+        <p class="font-name">Plus Jakarta Sans — SemiBold (600)</p>
+        <p class="font-sample-heading f-jakarta" style="font-weight:600; font-size:38px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Medium presence. Clean, confident, not shouting. Closest to Relativity's weight.</p>
+        <span class="font-tag">SemiBold</span>
+        <span class="font-tag">Relativity Match</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">21d</span>
+        <p class="font-name">Plus Jakarta Sans — Medium (500)</p>
+        <p class="font-sample-heading f-jakarta" style="font-weight:500; font-size:38px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Light and elegant. Quiet authority. Works well at larger sizes.</p>
+        <span class="font-tag">Medium</span>
+        <span class="font-tag">Understated</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">22</span>
+        <p class="font-name">Urbanist</p>
+        <p class="font-sample-heading f-urbanist" style="font-weight:800; font-size:40px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Clean, wide, architectural. Very uniform stroke width. Feels like technical drawings turned into type.</p>
+        <span class="font-tag">Architectural</span>
+        <span class="font-tag">Uniform</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">23</span>
+        <p class="font-name">Manrope</p>
+        <p class="font-sample-heading f-manrope" style="font-weight:800; font-size:38px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Semi-rounded geometric. Distinctive curved forms. Modern and approachable while staying bold.</p>
+        <span class="font-tag">Rounded</span>
+        <span class="font-tag">Approachable</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">24</span>
+        <p class="font-name">Big Shoulders Display</p>
+        <p class="font-sample-caps f-bigshoulders" style="font-weight:900; font-size:42px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Your current font. Industrial American, inspired by Chicago signage. Bold, authoritative, condensed.</p>
+        <span class="font-tag">Current</span>
+        <span class="font-tag">Industrial</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ CATEGORY 5: SCI-FI / WIDE ════════════════ -->
+  <div class="category">
+    <p class="category-label">/ 05 — Sci-Fi · Wide · Display</p>
+    <div class="font-grid">
+
+      <div class="font-card">
+        <span class="font-num">25</span>
+        <p class="font-name">Orbitron</p>
+        <p class="font-sample-caps f-orbitron" style="font-weight:900; font-size:32px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Geometric, wide, sci-fi. Strong Blade Runner / interface vibes. Best used sparingly at hero size.</p>
+        <span class="font-tag">Sci-Fi</span>
+        <span class="font-tag">Display Only</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">26</span>
+        <p class="font-name">Michroma</p>
+        <p class="font-sample-caps f-michroma" style="font-size:28px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Ultra-wide, precise geometry. Feels like engraved on aerospace components. All caps is its natural state.</p>
+        <span class="font-tag">Ultra Wide</span>
+        <span class="font-tag">Engraved</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">27</span>
+        <p class="font-name">Audiowide</p>
+        <p class="font-sample-heading f-audiowide" style="font-size:32px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Retro-futuristic, rounded geometric. Think cockpit instrumentation panels. Single weight.</p>
+        <span class="font-tag">Retro-Future</span>
+        <span class="font-tag">Rounded</span>
+      </div>
+
+      <div class="font-card">
+        <span class="font-num">28</span>
+        <p class="font-name">Space Grotesk</p>
+        <p class="font-sample-heading f-spacegrotesk" style="font-weight:700; font-size:38px;">Drilling Beneath<br/>The Surface</p>
+        <p class="font-context">Proportional version of Space Mono. Techy, distinct letterforms. Good for brands with engineering identity.</p>
+        <span class="font-tag">Engineering</span>
+        <span class="font-tag">Distinct</span>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

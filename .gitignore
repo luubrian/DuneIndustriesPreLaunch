@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local env
+.env
+.env.local
+
+# Claude / agent state
+.claude/
+temporary screenshots/
+
+# Hero video assets (large)
+Hero Video2/
+
+# Uploads (user-supplied content)
+uploads/
+
+# Large 3D model assets (not used by the site)
+brand_assets/*.SLDASM
+brand_assets/*.STEP
+brand_assets/*.fbx
+brand_assets/*.glb
+brand_assets/Jav*.zip
+brand_assets/Jav Charlie Master Assem/
+
+# Site export snapshots (created by git archive)
+dune-industries-site.zip
+dune-industries-site/

@@ -1,0 +1,287 @@
+/* ═══════════════════════════════════════════════════════════════
+   DUNE INDUSTRIES — ARID·FORGE
+   Desert Industrial Color + Type System · 2026
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Webfonts ───────────────────────────────────────────────── */
+@font-face {
+  font-family: 'GeneralSans';
+  src: url('fonts/GeneralSans-Extralight.woff2') format('woff2');
+  font-weight: 200; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'GeneralSans';
+  src: url('fonts/GeneralSans-Light.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'GeneralSans';
+  src: url('fonts/GeneralSans-Regular.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'GeneralSans';
+  src: url('fonts/GeneralSans-Medium.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'GeneralSans';
+  src: url('fonts/GeneralSans-Semibold.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'GeneralSans';
+  src: url('fonts/GeneralSans-Bold.woff2') format('woff2');
+  font-weight: 700; font-style: normal; font-display: swap;
+}
+@font-face {
+  font-family: 'GeneralSans';
+  src: url('fonts/GeneralSans-Italic.woff2') format('woff2');
+  font-weight: 400; font-style: italic; font-display: swap;
+}
+
+/* JetBrains Mono — loaded from Google Fonts (used for labels, eyebrows, field notes) */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap');
+
+:root {
+  /* ── Raw palette (ARID·FORGE) ───────────────────────────── */
+  /* Foundation — Darks */
+  --color-void:      #100E0C;  /* near-black, deepest shadow */
+  --color-forge:     #1C1814;  /* industrial dark, primary background */
+  --color-slag:      #2E2820;  /* charcoal, secondary surface */
+
+  /* Transition — Midtones */
+  --color-dust:      #5C5040;  /* weathered mid-dark, borders + dividers */
+  --color-sediment:  #8B7355;  /* warm brown, muted text / secondary UI */
+  --color-ochre:     #A8875C;  /* deep sand, body text on dark bg */
+
+  /* Desert — Lights */
+  --color-dune:      #C9A97A;  /* warm sand, primary brand accent */
+  --color-sandstone: #DFC49A;  /* light sand, highlighted text */
+  --color-bone:      #EDE0C4;  /* bleached sand, light surface */
+
+  /* Pure */
+  --color-haze:      #F7F2E8;  /* warm off-white, near-white surface */
+  --color-calcite:   #FFFFFF;  /* pure white */
+
+  /* Accent — Metals */
+  --color-rust:      #7A4A28;  /* oxidized iron, warning / deep accent */
+  --color-copper:    #B87333;  /* aged copper, CTA accent */
+
+  /* ── Semantic aliases — Dark (default) surface ──────────── */
+  --bg-primary:      var(--color-forge);
+  --bg-secondary:    var(--color-slag);
+  --bg-elevated:     var(--color-dust);
+  --bg-deepest:      var(--color-void);
+  --bg-inverse:      var(--color-haze);
+
+  --fg-primary:      var(--color-bone);
+  --fg-secondary:    var(--color-ochre);
+  --fg-muted:        var(--color-sediment);
+  --fg-subtle:       var(--color-dust);
+  --fg-inverse:      var(--color-void);
+
+  --brand-primary:   var(--color-dune);
+  --brand-accent:    var(--color-copper);
+  --brand-danger:    var(--color-rust);
+
+  --border-default:  var(--color-slag);
+  --border-subtle:   var(--color-dust);
+  --border-divider:  #3A3028;
+
+  /* ── Typography families ────────────────────────────────── */
+  --font-display: 'GeneralSans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body:    'GeneralSans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ── Semantic type tokens ───────────────────────────────── */
+  /* Display — large editorial / hero */
+  --type-display-size:    clamp(56px, 8vw, 120px);
+  --type-display-weight:  500;
+  --type-display-lh:      0.95;
+  --type-display-tracking:-0.03em;
+
+  /* H1 — section opener */
+  --type-h1-size:         clamp(48px, 5.5vw, 82px);
+  --type-h1-weight:       500;
+  --type-h1-lh:           0.93;
+  --type-h1-tracking:     -0.025em;
+
+  /* H2 — feature heading */
+  --type-h2-size:         clamp(32px, 3.6vw, 52px);
+  --type-h2-weight:       500;
+  --type-h2-lh:           1.1;
+  --type-h2-tracking:     -0.015em;
+
+  /* H3 — card / product name */
+  --type-h3-size:         19px;
+  --type-h3-weight:       500;
+  --type-h3-lh:           1.3;
+  --type-h3-tracking:     0.08em; /* slight expansion, uppercase */
+
+  /* Body */
+  --type-body-size:       13.5px;
+  --type-body-weight:     400;
+  --type-body-lh:         1.8;
+  --type-body-tracking:   0;
+
+  /* Body large — hero subcopy */
+  --type-body-lg-size:    15px;
+  --type-body-lg-lh:      1.65;
+
+  /* Caption / micro */
+  --type-caption-size:    11px;
+  --type-caption-weight:  400;
+  --type-caption-lh:      1.5;
+
+  /* Label — uppercase widely-tracked */
+  --type-label-size:      10px;
+  --type-label-weight:    600;
+  --type-label-tracking:  0.28em;
+
+  /* Mono — field notes, coordinates, tickers */
+  --type-mono-size:       10px;
+  --type-mono-weight:     400;
+  --type-mono-tracking:   0.24em;
+
+  /* ── Spacing scale (4-base) ─────────────────────────────── */
+  --s-0:  0;
+  --s-1:  4px;
+  --s-2:  8px;
+  --s-3:  12px;
+  --s-4:  16px;
+  --s-5:  24px;
+  --s-6:  32px;
+  --s-7:  48px;
+  --s-8:  64px;
+  --s-9:  88px;
+  --s-10: 120px;
+
+  /* ── Radii (minimal — brand is hard-edged) ──────────────── */
+  --radius-none: 0;
+  --radius-sm:   2px;
+  --radius-md:   4px;
+  --radius-full: 9999px;  /* for pills / dots only */
+
+  /* ── Shadows & elevation ────────────────────────────────── */
+  --shadow-drop-sm: 0 2px 20px rgba(16,14,12,0.35);
+  --shadow-drop-md: 0 8px 40px rgba(16,14,12,0.55);
+  --shadow-drop-lg: 0 2px 40px rgba(16,14,12,0.6);
+  --shadow-glow-dune: 0 0 40px rgba(201,169,122,0.12);
+
+  /* ── Motion ─────────────────────────────────────────────── */
+  --ease-industrial: cubic-bezier(0.22, 1, 0.36, 1); /* primary: firm, confident */
+  --ease-swipe:      cubic-bezier(0.55, 0, 0.85, 0.35); /* aggressive entry */
+  --ease-standard:   cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-quick:       200ms;
+  --dur-medium:      350ms;
+  --dur-slow:        700ms;
+  --dur-stately:     1100ms;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Semantic element styles — opt in by including this file and
+   using these class hooks, or apply to bare tags as shown.
+   ═══════════════════════════════════════════════════════════════ */
+
+.af-body, body.af {
+  font-family: var(--font-body);
+  font-weight: 400;
+  background: var(--bg-primary);
+  color: var(--fg-primary);
+}
+
+.af-display {
+  font-family: var(--font-display);
+  font-size: var(--type-display-size);
+  font-weight: var(--type-display-weight);
+  line-height: var(--type-display-lh);
+  letter-spacing: var(--type-display-tracking);
+  color: var(--fg-primary);
+}
+
+.af-h1, h1.af {
+  font-family: var(--font-display);
+  font-size: var(--type-h1-size);
+  font-weight: var(--type-h1-weight);
+  line-height: var(--type-h1-lh);
+  letter-spacing: var(--type-h1-tracking);
+  color: var(--fg-primary);
+}
+
+.af-h2, h2.af {
+  font-family: var(--font-display);
+  font-size: var(--type-h2-size);
+  font-weight: var(--type-h2-weight);
+  line-height: var(--type-h2-lh);
+  letter-spacing: var(--type-h2-tracking);
+  color: var(--fg-primary);
+}
+
+.af-h3, h3.af {
+  font-family: var(--font-display);
+  font-size: var(--type-h3-size);
+  font-weight: var(--type-h3-weight);
+  line-height: var(--type-h3-lh);
+  letter-spacing: var(--type-h3-tracking);
+  text-transform: uppercase;
+  color: var(--fg-primary);
+}
+
+.af-p, p.af {
+  font-family: var(--font-body);
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-lh);
+  color: var(--fg-muted);
+}
+
+.af-body-lg {
+  font-family: var(--font-body);
+  font-size: var(--type-body-lg-size);
+  line-height: var(--type-body-lg-lh);
+  color: var(--fg-muted);
+}
+
+.af-caption {
+  font-family: var(--font-body);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-lh);
+  color: var(--fg-muted);
+}
+
+.af-label {
+  font-family: var(--font-body);
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.af-mono, .af-eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-size);
+  font-weight: var(--type-mono-weight);
+  letter-spacing: var(--type-mono-tracking);
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+/* ── Grain overlay (apply to body or container) ──────────── */
+.af-grain::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  mix-blend-mode: screen;
+}
+
+.af-grain-light::after {
+  opacity: 0.025;
+  mix-blend-mode: multiply;
+}
