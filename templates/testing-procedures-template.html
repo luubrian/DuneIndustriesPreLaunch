@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Testing Procedures — Template</title>
+<link
+  rel="stylesheet"
+  href="https://api.fontshare.com/v2/css?f[]=general-sans@200,300,400,500,600,700&display=swap"
+/>
+<style>
+  /* ── Dune brand palette ──────────────────────────────────────────── */
+  :root {
+    --color-void:     #100E0C;
+    --color-slag:     #2E2820;
+    --color-sediment: #8B7355;
+    --color-dune:     #C9A97A;
+    --color-bone:     #EDE0C4;
+    --color-haze:     #F7F2E8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: #FFFFFF;
+  }
+
+  body {
+    font-family: 'General Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    color: var(--color-void);
+    padding: 40px 0;
+    line-height: 1.55;
+  }
+
+  /* Document "page" — letter-sized, centered, with shadow */
+  .page {
+    max-width: 8.5in;
+    margin: 0 auto 40px;
+    background: #FFFFFF;
+    padding: 0.85in 0.85in 0.85in;
+    box-shadow: 0 4px 24px rgba(16, 14, 12, 0.12);
+    page-break-after: always;
+  }
+
+  /* Header bar with Dune accent */
+  .doc-header {
+    border-top: 4px solid var(--color-dune);
+    border-bottom: 1px solid var(--color-sediment);
+    padding: 18px 0 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 32px;
+  }
+  .doc-header .brand {
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-void);
+  }
+  .doc-header .brand .dot { color: var(--color-dune); }
+  .doc-header .meta {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-sediment);
+    text-align: right;
+  }
+  .doc-header .meta div + div { margin-top: 3px; }
+
+  /* Document title */
+  h1.title {
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    color: var(--color-void);
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--color-sediment);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  /* Metadata block */
+  .metadata {
+    background: var(--color-bone);
+    border-left: 3px solid var(--color-dune);
+    padding: 14px 18px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px 24px;
+    font-size: 12px;
+    margin-bottom: 32px;
+  }
+  .metadata .label {
+    color: var(--color-sediment);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 500;
+    font-size: 10px;
+    margin-bottom: 2px;
+  }
+  .metadata .value {
+    color: var(--color-void);
+    font-weight: 500;
+  }
+
+  /* Section headings */
+  h2.section {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-slag);
+    border-bottom: 2px solid var(--color-dune);
+    padding-bottom: 6px;
+    margin: 30px 0 14px;
+  }
+
+  h3.sub {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-sediment);
+    margin: 18px 0 8px;
+  }
+
+  p {
+    font-size: 12px;
+    margin-bottom: 10px;
+    color: var(--color-void);
+  }
+
+  ol, ul {
+    padding-left: 22px;
+    margin-bottom: 14px;
+  }
+  ol li, ul li {
+    font-size: 12px;
+    margin-bottom: 6px;
+    color: var(--color-void);
+  }
+
+  /* Test step table */
+  table.steps {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin: 12px 0 22px;
+  }
+  table.steps thead {
+    background: var(--color-slag);
+    color: var(--color-haze);
+  }
+  table.steps th {
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 10px;
+  }
+  table.steps td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--color-bone);
+    vertical-align: top;
+    color: var(--color-void);
+  }
+  table.steps td.step-num {
+    width: 44px;
+    font-weight: 600;
+    color: var(--color-dune);
+    font-feature-settings: "tnum";
+  }
+  table.steps td.result {
+    width: 22%;
+    color: var(--color-sediment);
+    font-style: italic;
+  }
+  table.steps td.status {
+    width: 88px;
+    text-align: center;
+  }
+  table.steps tr:last-child td { border-bottom: none; }
+
+  /* Status pills */
+  .pill {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .pill.pass { background: var(--color-dune); color: var(--color-void); }
+  .pill.fail { background: var(--color-slag); color: var(--color-haze); }
+  .pill.skip { background: var(--color-bone); color: var(--color-sediment); }
+
+  /* Note / callout */
+  .callout {
+    background: var(--color-bone);
+    border-left: 3px solid var(--color-sediment);
+    padding: 12px 16px;
+    font-size: 12px;
+    margin: 12px 0 22px;
+    color: var(--color-slag);
+  }
+  .callout strong {
+    color: var(--color-void);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 11px;
+    margin-right: 6px;
+  }
+
+  /* Sign-off */
+  .signoff {
+    margin-top: 40px;
+    border-top: 1px solid var(--color-sediment);
+    padding-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .signoff .field {
+    display: flex;
+    flex-direction: column;
+  }
+  .signoff .field .label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--color-sediment);
+    margin-bottom: 24px;
+  }
+  .signoff .field .line {
+    border-bottom: 1px solid var(--color-slag);
+    height: 0;
+  }
+  .signoff .field .name {
+    font-size: 10px;
+    color: var(--color-sediment);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-top: 6px;
+  }
+
+  /* Footer */
+  .doc-footer {
+    margin-top: 30px;
+    padding-top: 12px;
+    border-top: 1px solid var(--color-bone);
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-sediment);
+  }
+
+  /* ── Print styles ─────────────────────────────────────────────────── */
+  @media print {
+    html, body { background: white; }
+    body { padding: 0; }
+    .page {
+      box-shadow: none;
+      margin: 0;
+      max-width: 100%;
+      padding: 0.6in;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ── Header ─────────────────────────────────────────────────── -->
+  <header class="doc-header">
+    <div class="brand">
+      <span class="dot">●</span> &nbsp;Dune Industries &nbsp;/&nbsp; Engineering
+    </div>
+    <div class="meta">
+      <div>Doc&nbsp;ID: TST-XXXX</div>
+      <div>Rev. 1.0 &nbsp;·&nbsp; YYYY-MM-DD</div>
+    </div>
+  </header>
+
+  <!-- ── Title ──────────────────────────────────────────────────── -->
+  <h1 class="title">Testing Procedure: [Subject of Test]</h1>
+  <div class="subtitle">Standard Operating Procedure &nbsp;/&nbsp; Validation Run</div>
+
+  <!-- ── Metadata block ────────────────────────────────────────── -->
+  <div class="metadata">
+    <div>
+      <div class="label">System / Subsystem</div>
+      <div class="value">[Hardware or software under test]</div>
+    </div>
+    <div>
+      <div class="label">Test Engineer</div>
+      <div class="value">[Name]</div>
+    </div>
+    <div>
+      <div class="label">Build / Version</div>
+      <div class="value">[Git SHA, firmware rev, etc.]</div>
+    </div>
+    <div>
+      <div class="label">Test Environment</div>
+      <div class="value">[Lab, vehicle, field]</div>
+    </div>
+    <div>
+      <div class="label">Witnesses</div>
+      <div class="value">[Optional list of observers]</div>
+    </div>
+    <div>
+      <div class="label">Duration (est.)</div>
+      <div class="value">[Hours / minutes]</div>
+    </div>
+  </div>
+
+  <!-- ── Objective ──────────────────────────────────────────────── -->
+  <h2 class="section">1 · Objective</h2>
+  <p>Concise one-paragraph statement of what this procedure is designed to verify or characterize.
+    Reference the requirement, performance spec, or open question that motivates the test.</p>
+
+  <!-- ── Scope ──────────────────────────────────────────────────── -->
+  <h2 class="section">2 · Scope</h2>
+  <p>Describe what is and isn't included in this test. Bound the system boundary
+    and explicitly call out anything excluded.</p>
+
+  <!-- ── Prerequisites / Setup ──────────────────────────────────── -->
+  <h2 class="section">3 · Prerequisites &amp; Setup</h2>
+
+  <h3 class="sub">3.1 Required equipment</h3>
+  <ul>
+    <li>[Tool, fixture, or instrument 1] — serial #, calibration date</li>
+    <li>[Tool 2]</li>
+    <li>[Tool 3]</li>
+  </ul>
+
+  <h3 class="sub">3.2 Software / firmware</h3>
+  <ul>
+    <li>[Build artifact, branch, or release tag]</li>
+    <li>[Required dependencies, data files]</li>
+  </ul>
+
+  <h3 class="sub">3.3 Pre-test conditions</h3>
+  <ol>
+    <li>Confirm [environmental condition: temperature, vibration, voltage]</li>
+    <li>Verify safety interlocks engaged and PPE in place.</li>
+    <li>Record baseline measurements (see Appendix A).</li>
+  </ol>
+
+  <div class="callout">
+    <strong>Note</strong>
+    If any prerequisite cannot be satisfied, halt the test and consult the responsible engineer
+    before proceeding.
+  </div>
+
+  <!-- ── Procedure ──────────────────────────────────────────────── -->
+  <h2 class="section">4 · Procedure</h2>
+
+  <table class="steps">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Action</th>
+        <th>Expected Result</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="step-num">1</td>
+        <td>Power on the unit and wait for boot to complete.</td>
+        <td class="result">Status LED transitions to green within 5s.</td>
+        <td class="status"><span class="pill pass">Pass</span></td>
+      </tr>
+      <tr>
+        <td class="step-num">2</td>
+        <td>Issue command <code>[example]</code> via interface [name].</td>
+        <td class="result">Telemetry packet received; field X within range Y–Z.</td>
+        <td class="status"><span class="pill pass">Pass</span></td>
+      </tr>
+      <tr>
+        <td class="step-num">3</td>
+        <td>Apply load step [value] for [duration].</td>
+        <td class="result">Response time &lt; [threshold]; no fault codes.</td>
+        <td class="status"><span class="pill skip">Skip</span></td>
+      </tr>
+      <tr>
+        <td class="step-num">4</td>
+        <td>[Action description]</td>
+        <td class="result">[Expected outcome]</td>
+        <td class="status"><span class="pill fail">Fail</span></td>
+      </tr>
+      <tr>
+        <td class="step-num">5</td>
+        <td>Shut down following the standard power-down sequence.</td>
+        <td class="result">Clean shutdown; no warnings in log.</td>
+        <td class="status">&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ── Acceptance criteria ─────────────────────────────────────── -->
+  <h2 class="section">5 · Acceptance Criteria</h2>
+  <ul>
+    <li>All procedure steps marked <span class="pill pass">Pass</span>.</li>
+    <li>No observed fault codes, error logs, or unexpected behavior.</li>
+    <li>Performance measurements meet or exceed [spec reference].</li>
+  </ul>
+
+  <!-- ── Observations & deviations ───────────────────────────────── -->
+  <h2 class="section">6 · Observations &amp; Deviations</h2>
+  <p>Record anything noteworthy that occurred during the test. Any deviation from the procedure
+    must be documented here with its rationale and any compensating measures taken.</p>
+
+  <h3 class="sub">6.1 Issues filed</h3>
+  <ul>
+    <li>[Tracker link or ID]</li>
+  </ul>
+
+  <!-- ── Sign-off ───────────────────────────────────────────────── -->
+  <h2 class="section">7 · Sign-off</h2>
+  <div class="signoff">
+    <div class="field">
+      <div class="label">Test Engineer</div>
+      <div class="line"></div>
+      <div class="name">Signature &nbsp;/&nbsp; Date</div>
+    </div>
+    <div class="field">
+      <div class="label">Reviewed By</div>
+      <div class="line"></div>
+      <div class="name">Signature &nbsp;/&nbsp; Date</div>
+    </div>
+  </div>
+
+  <!-- ── Footer ─────────────────────────────────────────────────── -->
+  <footer class="doc-footer">
+    <span>Dune Industries · Confidential</span>
+    <span>Page 1 of 1</span>
+  </footer>
+
+</div>
+
+</body>
+</html>

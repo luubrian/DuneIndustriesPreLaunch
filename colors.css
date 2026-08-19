@@ -1,0 +1,44 @@
+/* ARID·FORGE — Desert Industrial Color System
+   Dune Website · SANDWERX · 2026
+   ─────────────────────────────────────────── */
+
+:root {
+  /* Foundation ─ Darks */
+  --color-void:      #100E0C;  /* near-black, deepest shadow */
+  --color-forge:     #1C1814;  /* industrial dark, primary background */
+  --color-slag:      #2E2820;  /* charcoal, secondary surface */
+
+  /* Transition ─ Midtones */
+  --color-dust:      #5C5040;  /* weathered mid-dark, borders & dividers */
+  --color-sediment:  #8B7355;  /* warm brown, muted text / secondary UI */
+  --color-ochre:     #A8875C;  /* deep sand, body text on dark bg */
+
+  /* Desert ─ Lights */
+  --color-dune:      #C9A97A;  /* warm sand, primary brand accent */
+  --color-sandstone: #DFC49A;  /* light sand, highlighted text */
+  --color-bone:      #EDE0C4;  /* bleached sand, light surface */
+
+  /* Pure */
+  --color-haze:      #F7F2E8;  /* warm off-white, near-white surface */
+  --color-calcite:   #FFFFFF;  /* pure white */
+
+  /* Accent ─ Metals */
+  --color-rust:      #7A4A28;  /* oxidized iron, warning / deep accent */
+  --color-copper:    #B87333;  /* aged copper, call-to-action accent */
+
+  /* ── Semantic aliases ─────────────────────── */
+  --bg-primary:      var(--color-forge);
+  --bg-secondary:    var(--color-slag);
+  --bg-elevated:     var(--color-dust);
+
+  --text-primary:    var(--color-bone);
+  --text-secondary:  var(--color-ochre);
+  --text-muted:      var(--color-sediment);
+
+  --brand-primary:   var(--color-dune);
+  --brand-accent:    var(--color-copper);
+  --brand-danger:    var(--color-rust);
+
+  --border-default:  var(--color-slag);
+  --border-subtle:   var(--color-dust);
+}
