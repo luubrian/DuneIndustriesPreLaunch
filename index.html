@@ -397,6 +397,7 @@
                     becomes an invisible-but-clickable hazard. */}
                 <a
                   href="careers.html"
+                      onClick={(e) => { e.preventDefault(); if (!isTransitioning) setIsTransitioning(true); }}
                   className="careers-btn load-rise absolute right-3 top-3 z-[100] inline-flex items-center rounded-full border px-3 py-1 text-[11px] tracking-[0.18em] transition-colors md:right-6 md:top-6 md:px-6 md:py-2 md:text-sm"
                   style={{
                     backgroundColor: "rgba(46, 40, 32, 0.65)",
